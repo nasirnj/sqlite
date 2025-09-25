@@ -1,0 +1,28 @@
+from langchain_community.vectorstores import Chroma
+from langchain_community.embeddings import HuggingFaceEmbeddings
+
+# 1. Initialize embeddings (tiny model just for testing)
+embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+
+# 2. Create Chroma in-memory DB
+vectorstore = Chroma(
+    collection_name="test_collection",
+    embedding_function=embeddings,
+    persist_directory=None  # None = in-memory
+)
+
+# 3. Add some documents
+docs = ["Linux administration is fun",
+        "LangChain integrates with Chroma",
+        "Vector databases store embeddings"]
+
+vectorstore.add_texts(docs)
+
+# 4. Query
+query = "What does LangChain use for vector storage?"
+results = vectorstore.similarity_search(query, k=2)
+
+# 5. Print results
+for i, res in enumerate(results, 1):
+    print(f"{i}. {res.page_content}")
+
